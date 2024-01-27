@@ -12,7 +12,7 @@ struct Page1View: View {
     var body: some View {
       List {
         Button("Pindah ke Halaman 2"){
-          coordinator.push(.page2)
+          coordinator.push(.page2, params: Page2Param(menuTitle: "From Page 1"))
         }
         Button("Tampilkan Popup 1"){
           coordinator.present(sheet: .popup1)

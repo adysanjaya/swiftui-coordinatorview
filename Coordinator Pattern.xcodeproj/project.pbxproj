@@ -17,6 +17,7 @@
 		587343522B52AF4600D0F446 /* Popup2View.swift in Sources */ = {isa = PBXBuildFile; fileRef = 587343512B52AF4600D0F446 /* Popup2View.swift */; };
 		587343542B52B0AB00D0F446 /* Coordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 587343532B52B0AB00D0F446 /* Coordinator.swift */; };
 		587343562B52B31500D0F446 /* CoordinatorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 587343552B52B31500D0F446 /* CoordinatorView.swift */; };
+		5873435B2B5366ED00D0F446 /* Page2Param.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5873435A2B5366ED00D0F446 /* Page2Param.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -31,6 +32,7 @@
 		587343512B52AF4600D0F446 /* Popup2View.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Popup2View.swift; sourceTree = "<group>"; };
 		587343532B52B0AB00D0F446 /* Coordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Coordinator.swift; sourceTree = "<group>"; };
 		587343552B52B31500D0F446 /* CoordinatorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoordinatorView.swift; sourceTree = "<group>"; };
+		5873435A2B5366ED00D0F446 /* Page2Param.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Page2Param.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -63,6 +65,7 @@
 		5873433A2B52AEB100D0F446 /* Coordinator Pattern */ = {
 			isa = PBXGroup;
 			children = (
+				587343592B5366DC00D0F446 /* Params */,
 				5873433B2B52AEB100D0F446 /* Coordinator_PatternApp.swift */,
 				5873433F2B52AEB300D0F446 /* Assets.xcassets */,
 				587343412B52AEB300D0F446 /* Preview Content */,
@@ -83,6 +86,14 @@
 				587343422B52AEB300D0F446 /* Preview Assets.xcassets */,
 			);
 			path = "Preview Content";
+			sourceTree = "<group>";
+		};
+		587343592B5366DC00D0F446 /* Params */ = {
+			isa = PBXGroup;
+			children = (
+				5873435A2B5366ED00D0F446 /* Page2Param.swift */,
+			);
+			path = Params;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -160,6 +171,7 @@
 				5873434C2B52AF1500D0F446 /* Page2View.swift in Sources */,
 				587343502B52AF3900D0F446 /* Popup1View.swift in Sources */,
 				587343522B52AF4600D0F446 /* Popup2View.swift in Sources */,
+				5873435B2B5366ED00D0F446 /* Page2Param.swift in Sources */,
 				5873434A2B52AF0900D0F446 /* Page1View.swift in Sources */,
 				5873434E2B52AF2400D0F446 /* Page3View.swift in Sources */,
 				5873433C2B52AEB100D0F446 /* Coordinator_PatternApp.swift in Sources */,

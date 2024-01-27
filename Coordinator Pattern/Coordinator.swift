@@ -35,8 +35,15 @@ class Coordinator: ObservableObject {
   @Published var path = NavigationPath()
   @Published var sheet: Sheet?
   @Published var fullscreenCover: FullscreenCover?
+  private var parameters: [Page:Any] = [:]
+  
+  func push<T>(_ page: Page, params: T) {
+    self.parameters[page] = params
+    self.path.append(page)
+  }
   
   func push(_ page: Page) {
+    self.parameters[page] = nil
     self.path.append(page)
   }
   
@@ -70,7 +77,9 @@ class Coordinator: ObservableObject {
     case .page1:
       Page1View()
     case .page2:
-      Page2View()
+      if let page2Param = self.parameters[page] as? Page2Param {
+        Page2View(title: page2Param.menuTitle)
+      }
     case .page3:
       Page3View()
     }
