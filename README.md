@@ -32,28 +32,40 @@ struct Page1View_Previews: PreviewProvider {
 }
 ```
 
+Page2Param.swift
+```swiftui
+import SwiftUI
+
+struct Page2Param: Hashable, Codable {
+  var menuTitle: String
+}
+```
+
 Page2View.swift
 ```swiftui
 import SwiftUI
 
 struct Page2View: View {
   @EnvironmentObject private var coordinator: Coordinator
+  @Environment(\.presentationMode) var presentationMode
+  var param: Page2Param
+  
   var body: some View {
     List {
       Button("Pindah ke Halaman 3"){
         coordinator.push(.page3)
       }
       Button("Kembali"){
-        coordinator.pop()
+        presentationMode.wrappedValue.dismiss()
       }
     }
-    .navigationTitle("Page 2 Title")
+    .navigationTitle(param.menuTitle)
   }
 }
 
 struct Page2View_Previews: PreviewProvider {
     static var previews: some View {
-        Page2View()
+      Page2View(param: Page2Param(menuTitle: "Page2View"))
     }
 }
 ```
@@ -64,10 +76,11 @@ import SwiftUI
 
 struct Page3View: View {
   @EnvironmentObject private var coordinator: Coordinator
+  @Environment(\.presentationMode) var presentationMode
   var body: some View {
     List {
       Button("Kembali"){
-        coordinator.pop()
+        presentationMode.wrappedValue.dismiss()
       }
       Button("Kembali ke Paling Awal"){
         coordinator.popToRoot()
@@ -82,7 +95,6 @@ struct Page3View_Previews: PreviewProvider {
         Page3View()
     }
 }
-
 ```
 
 Popup1View.swift
@@ -134,19 +146,17 @@ struct Popup2View_Previews: PreviewProvider {
 
 Coordinator.swift
 ```swiftui
+import Combine
 import SwiftUI
 
-enum Page: String, Identifiable {
-  case page1, page2, page3
-  
-  var id: String {
-    self.rawValue
-  }
+enum Page: Hashable, Codable {
+  case page1
+  case page2(Page2Param)
+  case page3
 }
 
 enum Sheet: String, Identifiable {
   case popup1
-  
   var id: String {
     self.rawValue
   }
@@ -154,7 +164,6 @@ enum Sheet: String, Identifiable {
 
 enum FullscreenCover: String, Identifiable {
   case popup2
-  
   var id: String {
     self.rawValue
   }
@@ -164,6 +173,30 @@ class Coordinator: ObservableObject {
   @Published var path = NavigationPath()
   @Published var sheet: Sheet?
   @Published var fullscreenCover: FullscreenCover?
+  private lazy var decoder = JSONDecoder()
+  private lazy var encoder = JSONEncoder()
+  
+  var data: Data? {
+    get {
+      try? self.path.codable.map(self.encoder.encode)
+    }
+    set {
+      guard let data = newValue,
+            let path = try? decoder.decode(
+              NavigationPath.CodableRepresentation.self, from: data
+            )
+      else {
+        return
+      }
+      self.path = NavigationPath(path)
+    }
+  }
+  
+  var objectWillChangeSequence: AsyncPublisher<Publishers.Buffer<ObservableObjectPublisher>> {
+    objectWillChange
+      .buffer(size: 1, prefetch: .byRequest, whenFull: .dropOldest)
+      .values
+  }
   
   func push(_ page: Page) {
     self.path.append(page)
@@ -178,11 +211,15 @@ class Coordinator: ObservableObject {
   }
   
   func pop() {
-    self.path.removeLast()
+    if !self.path.isEmpty {
+      self.path.removeLast()
+    }
   }
   
   func popToRoot() {
-    self.path.removeLast(self.path.count)
+    if !self.path.isEmpty {
+      self.path.removeLast(self.path.count)
+    }
   }
   
   func dismissSheet() {
@@ -194,12 +231,12 @@ class Coordinator: ObservableObject {
   }
   
   @ViewBuilder
-  func build(page: Page) -> some View {
+  func build(page: Page = Page.page1) -> some View {
     switch page {
     case .page1:
       Page1View()
-    case .page2:
-      Page2View()
+    case .page2(let param):
+      Page2View(param: param)
     case .page3:
       Page3View()
     }
@@ -214,7 +251,7 @@ class Coordinator: ObservableObject {
       }
     }
   }
-    
+  
   @ViewBuilder
   func build(fullScreenCover: FullscreenCover) -> some View {
     switch fullScreenCover {
@@ -233,9 +270,10 @@ import SwiftUI
 
 struct CoordinatorView: View {
   @StateObject private var coordinator = Coordinator()
+  @SceneStorage("navigationState") var navigationStateData: Data?
   var body: some View {
     NavigationStack(path: $coordinator.path) {
-      coordinator.build(page: .page1)
+      coordinator.build()
         .navigationDestination(for: Page.self) { page in
           coordinator.build(page: page)
         }
@@ -244,6 +282,12 @@ struct CoordinatorView: View {
         }
         .fullScreenCover(item: $coordinator.fullscreenCover) { fullScreenCover in
           coordinator.build(fullScreenCover: fullScreenCover)
+        }
+        .onReceive(coordinator.objectWillChange.dropFirst()) { a in
+          navigationStateData = coordinator.data
+        }
+        .onAppear {
+          coordinator.data = navigationStateData
         }
     }
     .environmentObject(coordinator)
