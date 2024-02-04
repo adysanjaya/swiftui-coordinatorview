@@ -9,11 +9,8 @@ import SwiftUI
 
 struct Page2View: View {
   @EnvironmentObject private var coordinator: Coordinator
-  @State var title: String
-  
-  init(title: String) {
-    self.title = title
-  }
+  @Environment(\.presentationMode) var presentationMode
+  var param: Page2Param
   
   var body: some View {
     List {
@@ -21,16 +18,15 @@ struct Page2View: View {
         coordinator.push(.page3)
       }
       Button("Kembali"){
-        coordinator.pop()
+        presentationMode.wrappedValue.dismiss()
       }
     }
-    .navigationTitle(title)
-    .navigationBarBackButtonHidden(true)
+    .navigationTitle(param.menuTitle)
   }
 }
 
 struct Page2View_Previews: PreviewProvider {
     static var previews: some View {
-      Page2View(title: "Page2View")
+      Page2View(param: Page2Param(menuTitle: "Page2View"))
     }
 }

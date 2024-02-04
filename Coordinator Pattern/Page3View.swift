@@ -9,10 +9,11 @@ import SwiftUI
 
 struct Page3View: View {
   @EnvironmentObject private var coordinator: Coordinator
+  @Environment(\.presentationMode) var presentationMode
   var body: some View {
     List {
       Button("Kembali"){
-        coordinator.pop()
+        presentationMode.wrappedValue.dismiss()
       }
       Button("Kembali ke Paling Awal"){
         coordinator.popToRoot()

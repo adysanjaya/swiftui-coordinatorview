@@ -7,6 +7,6 @@
 
 import SwiftUI
 
-struct Page2Param {
+struct Page2Param: Hashable, Codable {
   var menuTitle: String
 }
